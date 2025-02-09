@@ -1,0 +1,63 @@
+create database Library;
+
+create table Books(
+BookID int primary key,
+Title varchar(100) not null, 
+AuthorID int not null,
+PublishedYear decimal ,
+CopiesAvailable int,
+BookCategory varchar(100)
+);
+
+create table Authers(
+AuthorID int primary key,
+FirstName varchar(50) not null,
+LastName varchar(50),
+BirthYear decimal
+);
+
+--1-insert 5 rows in each table
+ insert into books values
+(1 , 'alsalam ealayk ya sahibi' , 141088 , 2024 , 100 , 'Arabic literature' ),
+(2, 'The Silent Patient', 567432, 2019, 50, 'Psychological Thriller'),
+(3, 'Atomic Habits', 789654, 2018, 75, 'Self-Help'),
+(4, '1984', 123987, 1949, 30, 'Dystopian Fiction'),
+(5, 'Pride and Prejudice', 456321, 1813, 40, 'Classic Literature');
+
+INSERT INTO Authers VALUES
+(141088, 'Ahmad', 'Al-Tayeb', 1975),
+(567432, 'Alex', 'Michaelides', 1977),
+(789654, 'James', 'Clear', 1986),
+(123987, 'George', 'Orwell', 1903),
+(456321, 'Jane', 'Austen', 1775);
+
+--Display All Books and Authors: ( Query to retrieve and print details of all books along with their respective authors).
+select * from authers;
+select * from Books;
+
+
+ --3-Book Availability: ( Query to show the book with the highest and lowest number of available copies )
+ select max(CopiesAvailable) as highest_copies from Books;
+ select min (CopiesAvailable) as lowest_copies from Books;
+
+ --4- Average Publication Year:( Query to calculate and display the average publication year of books in the library )
+ select avg(PublishedYear) as Avg_publish from Books;
+
+ --5- Total Books Count:( Query to count and print the total number of books in the library )
+ select count(BookID) as number_of_books from Books;
+
+ --6- Empty Books Table ( i just need make Books Table with out any record )
+  truncate Table Books ;
+  select * from Books;
+
+  --7-update Authors table ( Query to add Email & Phone_Number as new columns )
+  alter table Authers
+  add Email varchar(50),
+  Phone_Number varchar(50);
+  select * from authers;
+
+  --8-Delete Authors Table
+  --Drop Table Authers ;
+
+select * from authers;
+select * from Books;

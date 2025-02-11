@@ -1,0 +1,212 @@
+
+--Students :
+--Stores information about students including their ID, name, date of birth, address, and any other info.
+create table Students(
+ID int primary key,
+student_name varchar(50),
+birth_Date date,
+student_address varchar(100)
+);
+
+--family_info : 
+--Provides contact info about relatives ( father ) of students,
+create table family_info(
+ID int primary key identity(1,1),
+father_name varchar(50),
+ --one to one relationship between student and family
+student_id int unique,
+foreign key (student_id) references Students(ID)
+);
+
+--Courses : 
+--Contains details of courses offered, including course ID, name, description, and Resource .
+create table Courses(
+ID int primary key,
+course_name varchar(50),
+course_description varchar(100),
+);
+
+ --many to many relationship between students and Courses
+ create table Students_courses(
+student_id int,
+course_id int,
+foreign key (student_id) references Students(ID),
+foreign key (course_id) references Courses(ID)
+);
+
+--Classes : 
+--Manages classes with details such as class ID, class code, room number, and schedule.
+create table Classes(
+ID int primary key identity(1,1),
+class_code varchar(50),
+room_number int,
+class_schedule varchar(50),
+ --one to many relationship between class and students
+student_id int,
+foreign key (student_id) references Students(ID)
+);
+
+--Assignments : 
+--Stores information about assignments, including assignment ID, name, description, and due date   
+create table Assignments(
+ID int primary key,
+assignment_name varchar(50),
+assignment_description varchar(50),
+due_date_assignment date
+
+);
+
+-- many to many relationship between students and assignments and the States (pass , failed ).
+create table student_assignment(
+student_id int,
+assignment_id int,
+foreign key (student_id) references Students(ID),
+foreign key (assignment_id) references Assignments(ID),
+assignment_status bit
+);
+
+--attendance  : 
+--Tracks student attendance in classes, including attendance ID, attendance date, and Type of absence (leaving, absence, late) the reason .
+create table attendance(
+ID int primary key ,
+attendance_date date
+);
+
+
+--one to many relatioship between student and attendance 
+create table student_attendance (
+student_id int,
+attendance_id int,
+foreign key (student_id) references Students(ID),
+foreign key (attendance_id) references Attendance(ID)
+);
+
+
+alter table student_attendance
+add absence varchar(50);
+select * from student_attendance;
+
+--insert data into students table ( name, birthdate, address)
+insert into Students values 
+('1','hala','12-10-2001' , 'Irbid'),
+('2','sura' ,'02-02-2000','Irbid'),
+('3','nada','12-10-2001' , 'Amman');
+
+--insert data into family_info table( father_name,student_id)
+insert into family_info values 
+('mohammad' ,1),
+('ali',2),
+('ahmad',3);
+
+--insert data into Courses table( course_name,course_description)
+insert into Courses values 
+('11','c++', 'c plus plus'),
+('12','c#' ,'c shap'),
+('13','java', 'java programmimg language');
+
+
+--insert data into Students_courses table( student_id,course_id )
+insert into Students_courses values
+(1, 11), --hala takes c++ course
+(1, 12), --hala takes c# course
+(1, 13), --hala takes java course
+(2, 11), --sura takes c++ course
+(2, 12), --sura takes c# course
+(3, 11); --nada takes java course
+
+
+
+--insert data into Classes table( class_code,room_number,class_schedule,student_id)
+insert into Classes values
+('CS101', 101, 'Monday & Wednesday',1),
+('CS102', 102, 'Sunday & Tuesday & Thursday',1),
+('CS103', 103, 'Monday & Wednesday',2);
+
+--insert data into Assignments table( assignment_name,assignment_description,due_date_assignment,
+insert into Assignments values
+('111','Math Homework', 'Solve 10 algebra questions', '2025-02-15'),
+('112','Science Project', 'Research on renewable energy', '2025-02-20'),
+('113','English Essay', 'Write an essay on climate change', '2025-02-10');
+
+
+
+--insert data into student_assignment table( student_id,assignment_id,assignment_status(pass , failed ) )
+insert into student_assignment values
+(1, 111,1),--hala has "Math Homework" assignment
+(1, 112,1), --hala has "Science Project" assignment
+(1, 113,0), --hala has "English Essay" assignment
+(2, 111,1),--sura has "Math Homework" assignment
+(2, 112,1), --sura has "Science Project" assignment
+(3, 111,0);--nada has "English Essay" assignment
+
+
+
+--insert data into attendance table( attendance_date,absence(leaving, absence, late) )
+insert into attendance values
+('0210','2025-02-10'),
+('0211','2025-02-11'),
+('0212','2025-02-12');
+select * from attendance;
+
+ 
+
+ --insert data into student_attendance table( student_id, attendance_id ,absence(leaving, absence, late) )
+
+insert into student_attendance values
+(1, 0210,'leaving'),--hala has "leaving" absence in (02-10)
+(1, 0211,'absence'), --hala has "absence" absence in (02-11)
+(1, 0212,'late'), --hala has "late" absence in (02-12)
+
+(2, 0210,'absence'),--sura has "absence" absence in (02-10)
+(2, 0211,'absence'), --sura has "absence" absence in (02-11)
+(2, 0212,'late'); --sura has "late" absence in (02-12)
+
+
+select * from student_attendance;
+
+--1- Select students in a specific birth date 
+select Students.student_name , Students.birth_Date 
+from Students 
+where birth_Date = '12-10-2001';
+
+select * from Courses;
+--2- Select details of a course by its name 
+select Courses.course_description 
+from Courses 
+where course_name='c++'; 
+
+--3-Add a new column 'Email' to the Students table 
+alter table Students
+add Email varchar(50);
+select * from Students;
+
+--4- Insert a new student record 
+insert into Students values
+(4,'sajeha','12-01-1999','Irbid','sajedah@gmail.com');
+select * from Students;
+
+--5- Select students who have relatives listed in the system 
+select student_name 
+from Students
+inner join family_info on  Students.ID=family_info.ID;
+
+--6- Select students who are enrolled in a specific course (c++ course) 
+select student_name 
+from Students
+inner join Students_courses on Students_courses.student_id = Students.ID
+where Students_courses.course_id=12;
+
+--7- Select students who have submitted and passed a specific assignment ("Math Homework" pass) 
+select * from student_assignment;
+select student_name
+from Students
+inner join student_assignment on student_assignment.student_id = Students.ID
+where student_assignment.assignment_id=111 and  student_assignment.assignment_status=1;
+
+-- I need the student who took an leaving between this date : (2025-02-10 - 2025-02-12)
+select * from student_attendance;
+select student_name
+from Students
+inner join student_attendance on student_attendance.student_id = Students.ID
+where student_attendance.absence='leaving';
+
